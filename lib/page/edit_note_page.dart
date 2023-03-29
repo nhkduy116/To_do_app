@@ -1,6 +1,7 @@
 // ignore_for_file: unused_import, unused_local_variable, deprecated_member_use, unused_element, unused_field, must_call_super
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqlite_api.dart';
@@ -46,80 +47,159 @@ class _EditNotePageState extends State<EditNotePage> {
   }
 
   void _showAlertDialogDelete(BuildContext context) {
-    showCupertinoModalPopup<void>(
-      barrierColor: Colors.transparent,
-      context: context,
-      builder: (BuildContext context) => CupertinoAlertDialog(
-        title: const Text('Delete?'),
-        content: const Text('Are you sure to delete this Note?'),
-        actions: <CupertinoDialogAction>[
-          CupertinoDialogAction(
-            /// This parameter indicates this action is the default,
-            /// and turns the action's text to bold text.
-            isDefaultAction: true,
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('No'),
+    if (Platform.isAndroid) {
+      showDialog<String>(
+        barrierColor: Colors.transparent,
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text(
+            'Delete?',
+            style: TextStyle(color: ColorConstant.colorTitle),
           ),
-          CupertinoDialogAction(
-            /// This parameter indicates the action would perform
-            /// a destructive action such as deletion, and turns
-            /// the action's text color to red.
-            isDestructiveAction: true,
-            onPressed: () async {
-              await db.deleteNote(Note(
-                  id: widget.id,
-                  title: myController.text,
-                  content: myControllerContent.text,
-                  createDate: widget.createDate,
-                  isChecked: widget.isChecked));
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => NotePage()));
-            },
-            child: const Text('Yes'),
+          content: const Text(
+            'Are you sure to delete this Note?',
+            style: TextStyle(color: ColorConstant.colorTitle),
           ),
-        ],
-      ),
-    );
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'Cancel'),
+              // _showAlertDialog(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await db.deleteNote(Note(
+                    id: widget.id,
+                    title: widget.title,
+                    content: widget.content,
+                    createDate: (widget.createDate),
+                    isChecked: widget.isChecked));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => NotePage()));
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+    if (Platform.isIOS) {
+      showCupertinoModalPopup<void>(
+        barrierColor: Colors.transparent,
+        context: context,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+          title: const Text('Delete?'),
+          content: const Text('Are you sure to delete this Note?'),
+          actions: <CupertinoDialogAction>[
+            CupertinoDialogAction(
+              /// This parameter indicates this action is the default,
+              /// and turns the action's text to bold text.
+              isDefaultAction: true,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('No'),
+            ),
+            CupertinoDialogAction(
+              /// This parameter indicates the action would perform
+              /// a destructive action such as deletion, and turns
+              /// the action's text color to red.
+              isDestructiveAction: true,
+              onPressed: () async {
+                await db.deleteNote(Note(
+                    id: widget.id,
+                    title: myController.text,
+                    content: myControllerContent.text,
+                    createDate: widget.createDate,
+                    isChecked: widget.isChecked));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => NotePage()));
+              },
+              child: const Text('Yes'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   void _showAlertDialogSave(BuildContext context) {
-    showCupertinoModalPopup<void>(
-      context: context,
-      builder: (BuildContext context) => CupertinoAlertDialog(
-        title: const Text('Save?'),
-        content: const Text('Are you sure to edit this Note?'),
-        actions: <CupertinoDialogAction>[
-          CupertinoDialogAction(
-            /// This parameter indicates this action is the default,
-            /// and turns the action's text to bold text.
-            isDefaultAction: true,
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('No'),
+    if (Platform.isAndroid) {
+      showDialog<String>(
+        barrierColor: Colors.transparent,
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text(
+            'Edit?',
+            style: TextStyle(color: ColorConstant.colorTitle),
           ),
-          CupertinoDialogAction(
-            /// This parameter indicates the action would perform
-            /// a destructive action such as deletion, and turns
-            /// the action's text color to red.
-            isDestructiveAction: true,
-            onPressed: () async {
-              await db.upgradeNote(Note(
-                  id: widget.id,
-                  title: myController.text,
-                  content: myControllerContent.text,
-                  createDate: widget.createDate,
-                  isChecked: widget.isChecked));
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => NotePage()));
-            },
-            child: const Text('Yes'),
+          content: const Text(
+            'Are you sure to edit this Note?',
+            style: TextStyle(color: ColorConstant.colorTitle),
           ),
-        ],
-      ),
-    );
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'Cancel'),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await db.upgradeNote(Note(
+                    id: widget.id,
+                    title: myController.text,
+                    content: myControllerContent.text,
+                    createDate: widget.createDate,
+                    isChecked: widget.isChecked));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => NotePage()));
+                print(db.getAllNote());
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      Timer(Duration(seconds: 1), () {
+        _showAlertDialogSave(context);
+      });
+    }
+    if (Platform.isIOS) {
+      showCupertinoModalPopup<void>(
+        context: context,
+        builder: (BuildContext context) => CupertinoAlertDialog(
+          title: const Text('Save?'),
+          content: const Text('Are you sure to edit this Note?'),
+          actions: <CupertinoDialogAction>[
+            CupertinoDialogAction(
+              /// This parameter indicates this action is the default,
+              /// and turns the action's text to bold text.
+              isDefaultAction: true,
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('No'),
+            ),
+            CupertinoDialogAction(
+              /// This parameter indicates the action would perform
+              /// a destructive action such as deletion, and turns
+              /// the action's text color to red.
+              isDestructiveAction: true,
+              onPressed: () async {
+                await db.upgradeNote(Note(
+                    id: widget.id,
+                    title: myController.text,
+                    content: myControllerContent.text,
+                    createDate: widget.createDate,
+                    isChecked: widget.isChecked));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => NotePage()));
+              },
+              child: const Text('Yes'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override
@@ -148,47 +228,9 @@ class _EditNotePageState extends State<EditNotePage> {
                     data: ThemeData(
                         dialogBackgroundColor: ColorConstant.colorSave),
                     child: Builder(builder: (context) {
-                      return FlatButton(
-                        color: ColorConstant.colorBtnDel,
-                        onPressed: () {
+                      return GestureDetector(
+                        onTap: () {
                           FocusManager.instance.primaryFocus?.unfocus();
-                          // showDialog<String>(
-                          //   barrierColor: Colors.transparent,
-                          //   context: context,
-                          //   builder: (BuildContext context) => AlertDialog(
-                          //     title: const Text(
-                          //       'Delete?',
-                          //       style: TextStyle(color: ColorConstant.colorTitle),
-                          //     ),
-                          //     content: const Text(
-                          //       'Are you sure to delete this Note?',
-                          //       style: TextStyle(color: ColorConstant.colorTitle),
-                          //     ),
-                          //     actions: <Widget>[
-                          //       TextButton(
-                          //         onPressed: () =>
-                          //             Navigator.pop(context, 'Cancel'),
-                          //         // _showAlertDialog(context),
-                          //         child: const Text('Cancel'),
-                          //       ),
-                          //       TextButton(
-                          //         onPressed: () async {
-                          //           await db.deleteNote(Note(
-                          //               id: widget.id,
-                          //               title: widget.title,
-                          //               content: widget.content,
-                          //               createDate: (widget.createDate),
-                          //               isChecked: widget.isChecked));
-                          //           Navigator.push(
-                          //               context,
-                          //               MaterialPageRoute(
-                          //                   builder: (context) => NotePage()));
-                          //         },
-                          //         child: const Text('OK'),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // );
                           _showAlertDialogDelete(context);
                         },
                         child: Text('Delete'),
@@ -201,50 +243,9 @@ class _EditNotePageState extends State<EditNotePage> {
                     data: ThemeData(
                         dialogBackgroundColor: ColorConstant.colorSave),
                     child: Builder(builder: (context) {
-                      return FlatButton(
-                        color: ColorConstant.colorSave,
-                        onPressed: () {
+                      return GestureDetector(
+                        onTap: () {
                           FocusManager.instance.primaryFocus?.unfocus();
-                          // showDialog<String>(
-                          //   barrierColor: Colors.transparent,
-                          //   context: context,
-                          //   builder: (BuildContext context) => AlertDialog(
-                          //     title: const Text(
-                          //       'Edit?',
-                          //       style: TextStyle(color: ColorConstant.colorTitle),
-                          //     ),
-                          //     content: const Text(
-                          //       'Are you sure to edit this Note?',
-                          //       style: TextStyle(color: ColorConstant.colorTitle),
-                          //     ),
-                          //     actions: <Widget>[
-                          //       TextButton(
-                          //         onPressed: () =>
-                          //             Navigator.pop(context, 'Cancel'),
-                          //         child: const Text('Cancel'),
-                          //       ),
-                          //       TextButton(
-                          //         onPressed: () async {
-                          //           await db.upgradeNote(Note(
-                          //               id: widget.id,
-                          //               title: myController.text,
-                          //               content: myControllerContent.text,
-                          //               createDate: widget.createDate,
-                          //               isChecked: widget.isChecked));
-                          //           Navigator.push(
-                          //               context,
-                          //               MaterialPageRoute(
-                          //                   builder: (context) => NotePage()));
-                          //           print(db.getAllNote());
-                          //         },
-                          //         child: const Text('OK'),
-                          //       ),
-                          //     ],
-                          //   ),
-                          // );
-                          // Timer(Duration(seconds: 1), () {
-                          //     _showAlertDialogSave(context);
-                          // });
                           _showAlertDialogSave(context);
                         },
                         child: Text(

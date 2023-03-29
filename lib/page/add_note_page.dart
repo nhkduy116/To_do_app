@@ -52,9 +52,8 @@ class _AddNoteState extends State<AddNote> {
             actions: <Widget>[
               Container(
                 padding: EdgeInsets.all(10),
-                child: FlatButton(
-                    color: ColorConstant.colorSave,
-                    onPressed: () async {
+                child: GestureDetector(
+                    onTap: () async {
                       if (myController.text == "" ||
                           myControllerContent.text == "") {
                         showDialog(

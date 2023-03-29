@@ -31,8 +31,8 @@ class _NotePageState extends State<NotePage> {
         actions: <Widget>[
           Container(
             // padding: EdgeInsets.all(15),
-            child: FlatButton(
-              onPressed: (() {
+            child: GestureDetector(
+              onTap: (() {
                 
               }),
               child: Icon(Icons.search, color: Colors.white, size: 25,),

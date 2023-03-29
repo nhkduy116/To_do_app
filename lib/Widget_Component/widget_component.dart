@@ -41,8 +41,8 @@ class _NoteBoxState extends State<NoteBox> {
         borderRadius: BorderRadius.circular(10),
         color: Color(rnd.nextInt(0xffffffff)),
       ),
-      child: FlatButton(
-          onPressed: () {
+      child: GestureDetector(
+          onTap: () {
             Navigator.push(
                 context,
                 MaterialPageRoute(
